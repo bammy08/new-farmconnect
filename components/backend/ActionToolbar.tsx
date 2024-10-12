@@ -8,7 +8,8 @@ interface ActionToolbarProps {
   onImport: () => void;
   onBulkAction: () => void;
   onDelete: () => void;
-  onAddCategory: () => void;
+  onAdd: () => void; // Changed to onAdd
+  title: string; // New title prop
 }
 
 const ActionToolbar: React.FC<ActionToolbarProps> = ({
@@ -16,7 +17,8 @@ const ActionToolbar: React.FC<ActionToolbarProps> = ({
   onImport,
   onBulkAction,
   onDelete,
-  onAddCategory,
+  onAdd,
+  title,
 }) => {
   return (
     <div className="flex flex-col md:flex-row justify-between items-center p-4 md:p-6 bg-white shadow-md dark:bg-slate-800 rounded-lg space-y-4 md:space-y-0 md:space-x-4">
@@ -57,11 +59,11 @@ const ActionToolbar: React.FC<ActionToolbarProps> = ({
           Delete
         </button>
         <button
-          onClick={onAddCategory}
+          onClick={onAdd}
           className="flex items-center justify-center md:justify-start bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 transition w-full md:w-auto"
         >
           <FiPlus className="w-4 h-4 mr-1" />
-          Add Category
+          {title}
         </button>
       </div>
 

@@ -1,5 +1,3 @@
-// components/backend/AddCategory.tsx
-
 'use client';
 
 import { CloudUpload, X } from 'lucide-react';
@@ -8,11 +6,16 @@ import { useForm } from 'react-hook-form';
 import SubmitButton from './forms/SubmitButton';
 import TextareaInput from './forms/TextAreaInput';
 import { generateSlug } from '@/lib/generateSlug';
+import ImageInput from './forms/ImageInput';
+import { useState } from 'react';
+import { makePostRequest } from '@/lib/apiRequest';
+import toast from 'react-hot-toast';
 
 interface AddCategoryFormData {
   title: string;
   description: string;
   slug?: string;
+  imageUrl: string;
 }
 
 interface AddCategoryProps {
@@ -20,6 +23,9 @@ interface AddCategoryProps {
 }
 
 export default function AddCategory({ onClose }: AddCategoryProps) {
+  const [imageUrl, setImageUrl] = useState('');
+  const [loading, setLoading] = useState(false); // Define loading state
+
   const {
     register,
     handleSubmit,
@@ -30,7 +36,18 @@ export default function AddCategory({ onClose }: AddCategoryProps) {
   async function onSubmit(data: AddCategoryFormData) {
     const slug = generateSlug(data.title);
     data.slug = slug;
+    data.imageUrl = imageUrl; // Add imageUrl to form data
+
     console.log(data);
+
+    await makePostRequest(
+      setLoading, // Pass the loading state setter
+      'api/categories', // Specify the endpoint
+      data, // The form data
+      'Category', // Resource name for the success message
+      reset // Pass the reset function to clear the form after submission
+    );
+    setImageUrl('');
   }
 
   return (
@@ -70,8 +87,15 @@ export default function AddCategory({ onClose }: AddCategoryProps) {
             register={register}
             errors={errors}
           />
+          <ImageInput
+            label="Category Image"
+            imageUrl={imageUrl}
+            setImageUrl={setImageUrl}
+            endpoint="imageUploader"
+          />
         </div>
-        <SubmitButton isLoading={false} title="Add Category" />
+        <SubmitButton isLoading={loading} title="Add Category" />{' '}
+        {/* Use loading state */}
       </form>
     </section>
   );

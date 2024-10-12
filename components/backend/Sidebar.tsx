@@ -33,6 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
       children: [
         { title: 'Products', href: '/dashboard/products' },
         { title: 'Categories', href: '/dashboard/categories' },
+        { title: 'Discount', href: '/dashboard/discount' },
       ],
     },
     {

@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import ActionToolbar from '@/components/backend/ActionToolbar';
 import Heading from '@/components/backend/Heading';
-import AddCategory from '@/components/backend/AddCategory'; // Your AddCategory component
 import CustomSheet from '@/components/backend/CustomSheet';
+import AddDiscount from '@/components/backend/AddDiscount';
 
 const Categories = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false); // State to control the Sheet visibility
@@ -25,27 +25,27 @@ const Categories = () => {
     console.log('Delete clicked');
   };
 
-  const handleAddCategory = () => {
+  const handleAddDiscount = () => {
     setIsSheetOpen(true); // Open the sheet when the button is clicked
   };
 
   return (
     <div className="px-4">
-      <Heading title="Categories" />
+      <Heading title="Discount" />
       <div className="mt-4">
         <ActionToolbar
           onExport={handleExport}
           onImport={handleImport}
           onBulkAction={handleBulkAction}
           onDelete={handleDelete}
-          onAdd={handleAddCategory}
-          title="Add Category" // Pass the title prop // Trigger sheet on click
+          onAdd={handleAddDiscount} // Trigger sheet on click
+          title="Add Discount"
         />
       </div>
 
       {/* Custom Sheet for Add Category */}
       <CustomSheet open={isSheetOpen} onClose={() => setIsSheetOpen(false)}>
-        <AddCategory onClose={() => setIsSheetOpen(false)} />
+        <AddDiscount onClose={() => setIsSheetOpen(false)} />
       </CustomSheet>
     </div>
   );

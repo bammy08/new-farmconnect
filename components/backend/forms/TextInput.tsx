@@ -38,7 +38,7 @@ const TextInput: React.FC<TextInputProps> = ({
           defaultValue={defaultValue}
           autoComplete={name}
           className="block w-full dark:bg-transparent dark:text-slate-50 rounded-md border-0 py-4 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-[18px] sm:leading-6"
-          placeholder={`Type the ${label.toLowerCase()}`}
+          placeholder={`${label.toLowerCase()}`}
         />
         {errors[name] && (
           <span className="text-sm text-red-600 ">{label} is required</span>
