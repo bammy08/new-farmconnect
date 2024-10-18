@@ -7,6 +7,7 @@ import TextInput from './forms/TextInput';
 import TextareaInput from './forms/TextAreaInput';
 import SubmitButton from './forms/SubmitButton';
 import { makePostRequest } from '@/lib/apiRequest';
+import { useRouter } from 'next/navigation';
 
 interface AddDiscountProps {
   onClose: () => void;
@@ -20,6 +21,7 @@ interface AddDiscountFormData {
 
 const AddDiscount = ({ onClose }: AddDiscountProps) => {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -59,7 +61,7 @@ const AddDiscount = ({ onClose }: AddDiscountProps) => {
         'Discount',
         reset
       );
-
+      router.push('/dashboard/discount'); // Navigate to /dashboard
       // Optionally, you can log or show a success message
       console.log('Discount created successfully:', data);
     } catch (error) {
@@ -98,12 +100,15 @@ const AddDiscount = ({ onClose }: AddDiscountProps) => {
             name="title"
             register={register}
             errors={errors}
+            className="w-full"
           />
           <TextInput
             label="Discount Code"
             name="code"
             register={register}
             errors={errors}
+            className="w-full"
+
             // readOnly // Make this field read-only if you don't want users to edit it
           />
           <TextInput

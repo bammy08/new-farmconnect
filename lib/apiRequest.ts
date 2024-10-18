@@ -11,16 +11,48 @@ interface AddCategoryFormData {
   slug?: string; // Optional field
   imageUrl: string;
 }
+
 interface AddDiscountFormData {
   title: string;
   code: string; // Discount code
   expiryDate: string; // Expiry date for the discount
 }
 
+interface AddProductFormData {
+  title: string;
+  stock: number;
+  price: number;
+  discount: number;
+  category: string[]; // Use string array to represent category
+  description: string;
+  slug?: string; // Optional field
+  imageUrl: string;
+  location: string;
+  city: string;
+  priceRange: string; // Add priceRange field
+}
+
+interface AddStaffFormData {
+  email: string;
+  name: string;
+  password: string;
+  phoneNumber: string;
+  dateJoining: string;
+  imageUrl: string;
+  role: string;
+}
+
+// Combine data types for POST and PUT requests
+type RequestData =
+  | AddCategoryFormData
+  | AddDiscountFormData
+  | AddProductFormData
+  | AddStaffFormData;
+
 export async function makePostRequest(
   setLoading: SetLoadingType,
   endpoint: string,
-  data: AddCategoryFormData | AddDiscountFormData,
+  data: RequestData,
   resourceName: string,
   reset?: ResetType
 ): Promise<void> {
@@ -36,34 +68,30 @@ export async function makePostRequest(
     });
 
     if (response.ok) {
-      setLoading(false);
       toast.success(`New ${resourceName} Created Successfully`);
       if (reset) reset(); // Only call reset if it's provided
     } else {
-      setLoading(false);
-      if (response.status === 409) {
-        toast.error('Something went wrong');
-      } else {
-        toast.error('Something went wrong');
-      }
+      const errorMessage = await response.json();
+      toast.error(errorMessage.message || 'Something went wrong');
     }
   } catch (error) {
-    setLoading(false);
-    console.log(error);
+    console.error(error);
+    toast.error('An error occurred. Please try again later.');
+  } finally {
+    setLoading(false); // Ensure loading is set back to false after the request completes
   }
 }
 
 export async function makePutRequest(
   setLoading: SetLoadingType,
   endpoint: string,
-  data: AddCategoryFormData | AddDiscountFormData,
+  data: RequestData,
   resourceName: string,
   redirect: RedirectType,
   reset?: ResetType // Mark reset as optional
 ): Promise<void> {
   try {
     setLoading(true);
-    fetch('http://localhost:3000/api/categries');
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
     const response = await fetch(`${baseUrl}/${endpoint}`, {
       method: 'PUT',
@@ -74,17 +102,17 @@ export async function makePutRequest(
     });
 
     if (response.ok) {
-      console.log(response);
-      setLoading(false);
       toast.success(`${resourceName} Updated Successfully`);
       redirect();
       if (reset) reset(); // Only call reset if it's provided
     } else {
-      setLoading(false);
-      toast.error('Something went wrong');
+      const errorMessage = await response.json();
+      toast.error(errorMessage.message || 'Something went wrong');
     }
   } catch (error) {
-    setLoading(false);
-    console.log(error);
+    console.error(error);
+    toast.error('An error occurred. Please try again later.');
+  } finally {
+    setLoading(false); // Ensure loading is set back to false after the request completes
   }
 }

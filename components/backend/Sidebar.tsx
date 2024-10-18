@@ -42,9 +42,9 @@ const Sidebar: React.FC<SidebarProps> = ({ showSidebar, setShowSidebar }) => {
       href: '/dashboard/customers',
     },
     {
-      title: 'Markets',
+      title: 'Staffs',
       icon: SiMarketo,
-      href: '/dashboard/markets',
+      href: '/dashboard/staff',
     },
     {
       title: 'Farmers',

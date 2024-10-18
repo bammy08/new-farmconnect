@@ -1,17 +1,23 @@
-import { UseFormRegister, FieldErrors } from 'react-hook-form';
+import React from 'react';
+import {
+  UseFormRegister,
+  FieldErrors,
+  FieldValues,
+  Path,
+} from 'react-hook-form';
 
-interface TextInputProps {
+interface TextInputProps<T extends FieldValues> {
   label: string;
-  name: string;
-  register: UseFormRegister<any>; // Use the appropriate type for your form's data
-  errors: FieldErrors;
+  name: Path<T>; // Ensures compatibility with nested form fields
+  register: UseFormRegister<T>;
+  errors: FieldErrors<T>; // Tied to the form's schema
   isRequired?: boolean;
   type?: string;
   className?: string;
   defaultValue?: string;
 }
 
-const TextInput: React.FC<TextInputProps> = ({
+const TextInput = <T extends FieldValues>({
   label,
   name,
   register,
@@ -20,7 +26,7 @@ const TextInput: React.FC<TextInputProps> = ({
   type = 'text',
   className = 'sm:col-span-2',
   defaultValue = '',
-}) => {
+}: TextInputProps<T>) => {
   return (
     <div className={className}>
       <label

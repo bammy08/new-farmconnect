@@ -23,8 +23,8 @@ interface AddCategoryProps {
 }
 
 export default function AddCategory({ onClose }: AddCategoryProps) {
-  const [imageUrl, setImageUrl] = useState('');
-  const [loading, setLoading] = useState(false); // Define loading state
+  const [imageUrls, setImageUrls] = useState<string[]>([]); // Updated to an array of strings
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -36,18 +36,18 @@ export default function AddCategory({ onClose }: AddCategoryProps) {
   async function onSubmit(data: AddCategoryFormData) {
     const slug = generateSlug(data.title);
     data.slug = slug;
-    data.imageUrl = imageUrl; // Add imageUrl to form data
+    data.imageUrl = imageUrls[0]; // Handle single image by using the first URL
 
     console.log(data);
 
     await makePostRequest(
-      setLoading, // Pass the loading state setter
-      'api/categories', // Specify the endpoint
-      data, // The form data
-      'Category', // Resource name for the success message
-      reset // Pass the reset function to clear the form after submission
+      setLoading,
+      'api/categories',
+      data,
+      'Category',
+      reset
     );
-    setImageUrl('');
+    setImageUrls([]); // Reset image URLs
   }
 
   return (
@@ -89,13 +89,12 @@ export default function AddCategory({ onClose }: AddCategoryProps) {
           />
           <ImageInput
             label="Category Image"
-            imageUrl={imageUrl}
-            setImageUrl={setImageUrl}
+            imageUrls={imageUrls} // Updated to imageUrls array
+            setImageUrls={setImageUrls} // Updated to setImageUrls function
             endpoint="imageUploader"
           />
         </div>
-        <SubmitButton isLoading={loading} title="Add Category" />{' '}
-        {/* Use loading state */}
+        <SubmitButton isLoading={loading} title="Add Category" />
       </form>
     </section>
   );

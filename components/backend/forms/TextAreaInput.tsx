@@ -1,18 +1,23 @@
 'use client';
 
-import { FieldErrors, UseFormRegister } from 'react-hook-form';
+import {
+  FieldErrors,
+  UseFormRegister,
+  FieldValues,
+  Path,
+} from 'react-hook-form';
 
-interface TextareaInputProps {
+interface TextareaInputProps<T extends FieldValues> {
   label: string;
-  name: string;
-  register: UseFormRegister<any>; // Define a more specific type for the form schema if available
-  errors: FieldErrors;
+  name: Path<T>; // Ensures compatibility with form field names
+  register: UseFormRegister<T>;
+  errors: FieldErrors<T>; // Matches the form's field structure
   isRequired?: boolean;
   type?: string;
   className?: string;
 }
 
-const TextareaInput: React.FC<TextareaInputProps> = ({
+const TextareaInput = <T extends FieldValues>({
   label,
   name,
   register,
@@ -20,7 +25,7 @@ const TextareaInput: React.FC<TextareaInputProps> = ({
   isRequired = true,
   type = 'text',
   className = 'sm:col-span-2',
-}) => {
+}: TextareaInputProps<T>) => {
   return (
     <div className={className}>
       <label

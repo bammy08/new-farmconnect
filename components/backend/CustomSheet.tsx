@@ -34,7 +34,7 @@ const CustomSheet: React.FC<CustomSheetProps> = ({
 
       {/* Sheet Content */}
       <div
-        className={`fixed right-0 top-0 h-full w-full sm:w-[640px] md:w-[480px] lg:w-[640px] shadow-lg z-50 flex flex-col bg-white dark:bg-slate-700 transition-transform duration-300 ease-in-out transform ${
+        className={`fixed right-0 top-0 h-full w-full sm:w-[640px] md:w-[480px] lg:w-[940px] shadow-lg z-50 flex flex-col bg-white dark:bg-slate-700 transition-transform duration-300 ease-in-out transform ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
