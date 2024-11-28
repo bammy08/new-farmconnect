@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       {
-        message: 'Failed to create category',
+        message: 'Failed to create staff',
         error: error instanceof Error ? error.message : 'Unknown error',
       },
       { status: 500 }

@@ -9,7 +9,7 @@ interface ImageInputProps {
   imageUrls?: string[]; // Store multiple image URLs
   setImageUrls: (urls: string[]) => void; // Setter for multiple image URLs
   className?: string;
-  endpoint?: 'imageUploader' | 'productImageUploader';
+  endpoint?: 'imageUploader' | 'productImageUploader' | 'farmerImageUploader';
 }
 
 const ImageInput: React.FC<ImageInputProps> = ({

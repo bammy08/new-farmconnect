@@ -7,7 +7,6 @@ type RedirectType = () => void;
 
 interface AddCategoryFormData {
   title: string;
-  description: string;
   slug?: string; // Optional field
   imageUrl: string;
 }
@@ -23,13 +22,21 @@ interface AddProductFormData {
   stock: number;
   price: number;
   discount: number;
-  category: string[]; // Use string array to represent category
+  categoryId: string; // Use string array to represent category
   description: string;
   slug?: string; // Optional field
-  imageUrl: string;
+  imageUrl: string[];
   location: string;
   city: string;
   priceRange: string; // Add priceRange field
+}
+interface AddFarmerFormData {
+  name: string;
+  email: string;
+  phone: number;
+  profileImageUrl: string;
+  location: string;
+  city: string;
 }
 
 interface AddStaffFormData {
@@ -47,6 +54,7 @@ type RequestData =
   | AddCategoryFormData
   | AddDiscountFormData
   | AddProductFormData
+  | AddFarmerFormData
   | AddStaffFormData;
 
 export async function makePostRequest(
@@ -112,6 +120,39 @@ export async function makePutRequest(
   } catch (error) {
     console.error(error);
     toast.error('An error occurred. Please try again later.');
+  } finally {
+    setLoading(false); // Ensure loading is set back to false after the request completes
+  }
+}
+
+// Define the function types
+
+export async function makeGetRequest<T>(
+  setLoading: SetLoadingType,
+  endpoint: string
+): Promise<T | null> {
+  try {
+    setLoading(true);
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const response = await fetch(`${baseUrl}/${endpoint}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data as T;
+    } else {
+      const errorMessage = await response.json();
+      toast.error(errorMessage.message || 'Failed to fetch data');
+      return null;
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error('An error occurred while fetching data.');
+    return null;
   } finally {
     setLoading(false); // Ensure loading is set back to false after the request completes
   }

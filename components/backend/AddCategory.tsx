@@ -10,10 +10,10 @@ import ImageInput from './forms/ImageInput';
 import { useState } from 'react';
 import { makePostRequest } from '@/lib/apiRequest';
 import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface AddCategoryFormData {
   title: string;
-  description: string;
   slug?: string;
   imageUrl: string;
 }
@@ -25,6 +25,7 @@ interface AddCategoryProps {
 export default function AddCategory({ onClose }: AddCategoryProps) {
   const [imageUrls, setImageUrls] = useState<string[]>([]); // Updated to an array of strings
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -48,6 +49,7 @@ export default function AddCategory({ onClose }: AddCategoryProps) {
       reset
     );
     setImageUrls([]); // Reset image URLs
+    router.push('/dashboard');
   }
 
   return (
@@ -81,12 +83,7 @@ export default function AddCategory({ onClose }: AddCategoryProps) {
             register={register}
             errors={errors}
           />
-          <TextareaInput
-            label="Category Description"
-            name="description"
-            register={register}
-            errors={errors}
-          />
+
           <ImageInput
             label="Category Image"
             imageUrls={imageUrls} // Updated to imageUrls array

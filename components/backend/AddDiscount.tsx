@@ -50,10 +50,7 @@ const AddDiscount = ({ onClose }: AddDiscountProps) => {
 
   async function onSubmit(data: AddDiscountFormData) {
     try {
-      // Set loading to true
       setLoading(true);
-
-      // Call makePostRequest with data
       await makePostRequest(
         setLoading,
         'api/discount',
@@ -61,13 +58,11 @@ const AddDiscount = ({ onClose }: AddDiscountProps) => {
         'Discount',
         reset
       );
-      router.push('/dashboard/discount'); // Navigate to /dashboard
-      // Optionally, you can log or show a success message
+      router.push('/dashboard');
       console.log('Discount created successfully:', data);
     } catch (error) {
       console.error('Failed to create discount:', error);
     } finally {
-      // Ensure loading is set back to false after the request completes
       setLoading(false);
     }
   }
@@ -108,8 +103,6 @@ const AddDiscount = ({ onClose }: AddDiscountProps) => {
             register={register}
             errors={errors}
             className="w-full"
-
-            // readOnly // Make this field read-only if you don't want users to edit it
           />
           <TextInput
             label="Discount Expiry Date"

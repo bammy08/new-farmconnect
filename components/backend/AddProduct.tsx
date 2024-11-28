@@ -1,15 +1,16 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import TextInput from './forms/TextInput';
 import SubmitButton from './forms/SubmitButton';
 import { X } from 'lucide-react';
-import { makePostRequest } from '@/lib/apiRequest';
+import { makePostRequest, makeGetRequest } from '@/lib/apiRequest'; // makeGetRequest for fetching categories
 import SelectInput from './forms/SelectInput';
-import { farmingCategories, location } from '@/app/data';
+import { location } from '@/app/data'; // Only use the location data, as categories come from the database
 import TextareaInput from './forms/TextAreaInput';
 import ImageInput from './forms/ImageInput';
+import { generateSlug } from '@/lib/generateSlug';
 
 interface AddProductProps {
   onClose: () => void;
@@ -20,10 +21,10 @@ interface AddProductFormData {
   stock: number;
   price: number;
   discount: number;
-  category: [];
+  categoryId: string; // Updated to string since it's likely an ID from the DB
   description: string;
   slug?: string;
-  imageUrl: string;
+  imageUrl: string[];
   location: string;
   city: string;
   priceRange: string; // Add priceRange field
@@ -32,7 +33,11 @@ interface AddProductFormData {
 const AddProduct = ({ onClose }: AddProductProps) => {
   const [loading, setLoading] = useState(false);
   const [selectedState, setSelectedState] = useState<string | null>(null);
+  const [categories, setCategories] = useState<{ id: string; title: string }[]>(
+    []
+  ); // State to hold categories
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+
   // Define price range options
   const priceRangeOptions = [
     { id: '1-10', title: '1-10' },
@@ -56,17 +61,36 @@ const AddProduct = ({ onClose }: AddProductProps) => {
       }))
     : [];
 
+  // Fetch categories from the API
+  useEffect(() => {
+    async function fetchCategories() {
+      try {
+        const data = await makeGetRequest<{ id: string; title: string }[]>(
+          setLoading,
+          'api/categories'
+        ); // Correctly pass both arguments and type the response
+        setCategories(data || []); // Assuming the response is an array of categories
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    }
+
+    fetchCategories(); // Call the function when the component mounts
+  }, []);
+
   const {
     register,
     handleSubmit,
     reset,
-
     formState: { errors },
   } = useForm<AddProductFormData>();
 
   async function onSubmit(data: AddProductFormData) {
     try {
       setLoading(true);
+      const slug = generateSlug(data.title);
+      data.slug = slug;
+      data.imageUrl = imageUrls;
 
       // Make the POST request to the products API
       await makePostRequest(
@@ -149,8 +173,11 @@ const AddProduct = ({ onClose }: AddProductProps) => {
           <SelectInput
             register={register}
             label="Category"
-            name="category"
-            options={farmingCategories}
+            name="categoryId"
+            options={categories.map((category) => ({
+              id: category.id,
+              title: category.title,
+            }))}
             className="w-full mt-1"
           />
 
