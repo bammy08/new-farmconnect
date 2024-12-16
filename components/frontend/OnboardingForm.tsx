@@ -16,6 +16,7 @@ type AddFarmerFormData = {
   id?: string;
   name: string;
   email: string;
+  shop: string;
   phone: number;
   profileImageUrl: string;
   location: string;
@@ -37,6 +38,7 @@ const OnboardingForm: React.FC<OnboardingFormProps> = ({ user }) => {
     ? {
         name: user.name,
         email: user.email,
+        shop: user.shop,
         phone: user.phone || '', // Use empty string or a fallback value if undefined
         profileImageUrl: '', // Add default logic for profileImageUrl if available
         location: user.location || '', // Prefill with location data if available
@@ -45,6 +47,7 @@ const OnboardingForm: React.FC<OnboardingFormProps> = ({ user }) => {
     : {
         name: '',
         email: '',
+        shop: '',
         phone: '',
         profileImageUrl: '',
         location: '',
@@ -79,6 +82,7 @@ const OnboardingForm: React.FC<OnboardingFormProps> = ({ user }) => {
       // Prefill each field with the user data
       setValue('name', user.name);
       setValue('email', user.email);
+      setValue('shop', user.shop);
       setValue('phone', user.phone);
       setValue('location', user.location);
       setValue('city', user.city);
@@ -115,7 +119,7 @@ const OnboardingForm: React.FC<OnboardingFormProps> = ({ user }) => {
       );
 
       console.log('Account created successfully:', data);
-      router.push('/dashboard/farmers');
+      router.push('/dashboard');
     } catch (error) {
       console.error('Failed to create account:', error);
     } finally {
@@ -146,6 +150,13 @@ const OnboardingForm: React.FC<OnboardingFormProps> = ({ user }) => {
             className="w-full"
           />
 
+          <TextInput
+            label="Shop Name"
+            name="shop"
+            register={register}
+            errors={errors}
+            className="w-full"
+          />
           <TextInput
             label="Phone Number"
             name="phone"
@@ -184,7 +195,7 @@ const OnboardingForm: React.FC<OnboardingFormProps> = ({ user }) => {
             endpoint="farmerImageUploader"
           />
         </div>
-        <SubmitButton isLoading={loading} title="Add Farmer" />
+        <SubmitButton isLoading={loading} title="Submit" />
       </form>
     </section>
   );

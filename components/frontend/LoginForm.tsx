@@ -10,12 +10,10 @@ import SubmitButton from '../backend/forms/SubmitButton';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import TextInput from '../backend/forms/TextInput';
+import { signIn } from 'next-auth/react';
 
 // Validation schema using Zod
-const registrationSchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: 'Name must be at least 2 characters long' }),
+const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
   password: z
     .string()
@@ -23,7 +21,7 @@ const registrationSchema = z.object({
 });
 
 // Form input types
-type FormInputs = z.infer<typeof registrationSchema>;
+type FormInputs = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
   const router = useRouter();
@@ -40,58 +38,34 @@ const LoginForm = () => {
     reset,
     formState: { errors },
   } = useForm<FormInputs>({
-    resolver: zodResolver(registrationSchema),
+    resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+  async function onSubmit(data: FormInputs) {
+    console.log(data);
     try {
-      console.log(data);
       setLoading(true);
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-      const payload = { ...data }; // Include role in the payload
-      const response = await fetch(`${baseUrl}/api/users`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
+      console.log('Attempting to sign in with credentials:', data);
+      const loginData = await signIn('credentials', {
+        ...data,
+        redirect: false,
       });
-
-      const responseData = await response.json();
-      console.log('Response Data:', responseData); // Log the response for debugging
-
-      if (response.ok) {
+      console.log('SignIn response:', loginData);
+      if (loginData?.error) {
         setLoading(false);
-        toast.success('User Created Successfully');
-        reset();
-
-        if (responseData.data && responseData.data.id) {
-          // Check role and redirect accordingly
-          if (responseData.data.role === 'FARMER') {
-            // Redirect to onboarding page with the user id
-            router.push(`/onboarding/${responseData.data.id}`);
-          } else if (responseData.data.role === 'USER') {
-            // Redirect to login page for users
-            router.push('/');
-          }
-        } else {
-          toast.error('User ID is missing, please try again.');
-        }
+        toast.error('Sign-in error: Check your credentials');
       } else {
-        setLoading(false);
-        if (response.status === 409) {
-          toast.error('User with this Email already exists');
-        } else {
-          console.error('Server Error:', responseData.message);
-          toast.error('Oops Something Went wrong');
-        }
+        // Sign-in was successful
+        toast.success('Login Successful');
+        reset();
+        router.push('/');
       }
     } catch (error) {
       setLoading(false);
       console.error('Network Error:', error);
-      toast.error('Something Went wrong, Please Try Again');
+      toast.error('It seems something is wrong with your Network');
     }
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>

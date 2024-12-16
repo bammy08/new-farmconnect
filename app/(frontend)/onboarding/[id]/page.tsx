@@ -3,6 +3,7 @@
 import OnboardingForm from '@/components/frontend/OnboardingForm';
 import React, { useEffect, useState } from 'react';
 import { getData } from '@/lib/getData';
+import { useSearchParams } from 'next/navigation';
 
 type User = {
   id: string;
@@ -27,20 +28,28 @@ type FarmerUser = {
 
 const Onboarding: React.FC<{ params: { id: string } }> = ({ params }) => {
   const { id } = params;
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (!id) {
+      if (!id || !token) {
+        setError('Invalid link or missing token.');
         setLoading(false);
         return;
       }
 
       try {
-        const userData = await getData<User>(`users/${id}`);
-        setUser(userData || null);
+        // Validate the token and fetch user data
+        const userData = await getData<User>(`users/${id}?token=${token}`);
+        if (!userData) {
+          setError('Invalid or expired token.');
+          return;
+        }
+        setUser(userData);
       } catch (err) {
         console.error('Error fetching user:', err);
         setError('Failed to load user.');
@@ -50,7 +59,7 @@ const Onboarding: React.FC<{ params: { id: string } }> = ({ params }) => {
     };
 
     fetchUser();
-  }, [id]);
+  }, [id, token]);
 
   const prefilledData: FarmerUser | undefined = user
     ? {

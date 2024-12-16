@@ -78,6 +78,7 @@ model FarmerProfile {
   email           String
   name            String
   phone           String
+  shop            String
   location        String
   city            String
   products        String[]

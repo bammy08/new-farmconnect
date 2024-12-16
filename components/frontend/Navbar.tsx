@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ShoppingCart } from 'lucide-react';
+import { LogOutIcon, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -15,8 +15,24 @@ import { MdMenu, MdOutlinePerson4 } from 'react-icons/md';
 import { ModeToggle } from '../ModeToggle';
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet';
 import { makeGetRequest } from '@/lib/apiRequest';
+import { getData } from '@/lib/getData';
+import { signOut, useSession } from 'next-auth/react';
+import Loading from '@/app/loading';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+import { DashboardIcon } from '@radix-ui/react-icons';
+import { FaRegUser } from 'react-icons/fa';
 
 export default function Navbar() {
+  const { data: session, status } = useSession();
+  if (status === 'loading') {
+    <Loading />;
+  }
+
   const [isHelpOpen, setIsHelpOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const helpRef = useRef<HTMLDivElement>(null);
@@ -48,20 +64,22 @@ export default function Navbar() {
     };
   }, []);
 
+  // Fetch categories using getData
   useEffect(() => {
     async function fetchCategories() {
+      setLoading(true); // Start loading
       try {
-        const data = await makeGetRequest<{ id: string; title: string }[]>(
-          setLoading,
-          'api/categories'
-        ); // Correctly pass both arguments and type the response
-        setCategories(data || []); // Assuming the response is an array of categories
+        const data =
+          await getData<{ id: string; title: string }[]>('categories'); // Use your getData function
+        setCategories(data || []); // Set categories or an empty array
       } catch (error) {
         console.error('Failed to fetch categories:', error);
+      } finally {
+        setLoading(false); // Stop loading
       }
     }
 
-    fetchCategories(); // Call the function when the component mounts
+    fetchCategories(); // Fetch categories on mount
   }, []);
 
   return (
@@ -81,7 +99,7 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-      <div className=" md:hidden flex items-center mb-4 px-4 py-2">
+      <div className=" lg:hidden flex items-center mb-4 px-4 py-2">
         <form className="relative w-full">
           <input
             type="text"
@@ -99,14 +117,55 @@ export default function Navbar() {
       {isMobileMenuOpen && (
         <div className="bg-gray-100 dark:bg-slate-700 px-4 py-4 space-y-4">
           {/* Seller and Login Buttons */}
-          <div className="flex justify-between items-center gap-4">
-            <button className="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-semibold w-full">
-              Become a Seller
-            </button>
-            <button className="bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-semibold w-full">
-              Login
-            </button>
-          </div>
+          {status === 'authenticated' ? (
+            <div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Image
+                    width={100}
+                    height={100}
+                    src="/images/profile.jpg"
+                    alt="User Avatar"
+                    className="h-8 w-8 rounded-full object-cover"
+                  />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="bg-white text-black shadow-lg mr-8 rounded-md">
+                  <DropdownMenuItem>
+                    <Link
+                      className="flex items-center justify-center"
+                      href="/profile"
+                    >
+                      <DashboardIcon className="mr-2" />
+                      <span> Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    <Link
+                      className="flex items-center justify-center"
+                      href="/profile"
+                    >
+                      <FaRegUser className="mr-2" />
+                      <span> Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <hr />
+                  <DropdownMenuItem className="cursor-pointer">
+                    <LogOutIcon className="mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center gap-4">
+              <button className="bg-yellow-500 text-white px-4 py-2 rounded-md text-sm font-semibold w-full">
+                Become a Seller
+              </button>
+              <button className="bg-gray-800 text-white px-4 py-2 rounded-md text-sm font-semibold w-full">
+                Login
+              </button>
+            </div>
+          )}
 
           {/* Links with Icons */}
           <nav className="grid grid-cols-2 gap-4">
@@ -228,21 +287,72 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-6">
-            <Link
-              href="/seller"
-              className="text-lg font-semibold hover:underline"
-            >
-              Become a Seller
-            </Link>
-            <Link
-              href="/login"
-              className="text-lg font-semibold hover:underline"
-            >
-              <span className="flex justify-center items-center gap-1">
-                <MdOutlinePerson4 />
-                <span>Login</span>
-              </span>
-            </Link>
+            {status === 'authenticated' && session?.user ? (
+              <div className="">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="h-8 w-8 flex items-center justify-center bg-yellow-500 text-white rounded-full font-bold cursor-pointer">
+                      {/* Safely extract initials if user name is available */}
+                      {
+                        session.user.name
+                          ? session.user.name
+                              .split(' ')
+                              .map((word) => word[0])
+                              .join('')
+                              .toUpperCase()
+                          : 'NA' /* Fallback if name is not available */
+                      }
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-white text-black shadow-lg mr-8 rounded-md z-[3333]">
+                    <DropdownMenuItem>
+                      <Link
+                        className="flex items-center justify-center"
+                        href="/dashboard"
+                      >
+                        <DashboardIcon className="mr-2" />
+                        <span> Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="cursor-pointer">
+                      <Link
+                        className="flex items-center justify-center"
+                        href="/profile"
+                      >
+                        <FaRegUser className="mr-2" />
+                        <span> Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <hr />
+                    <DropdownMenuItem
+                      className="cursor-pointer"
+                      onClick={() => signOut()}
+                    >
+                      <LogOutIcon className="mr-2" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            ) : (
+              <div className="flex justify-between items-center gap-4">
+                <Link
+                  href="/seller"
+                  className="text-lg font-semibold hover:underline"
+                >
+                  Become a Seller
+                </Link>
+                <Link
+                  href="/login"
+                  className="text-lg font-semibold hover:underline"
+                >
+                  <span className="flex justify-center items-center gap-1">
+                    <MdOutlinePerson4 />
+                    <span>Login</span>
+                  </span>
+                </Link>
+              </div>
+            )}
 
             <div className="relative" ref={helpRef}>
               <button

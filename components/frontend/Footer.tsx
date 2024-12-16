@@ -43,14 +43,14 @@ const Footer = () => {
                 ] as SocialPlatform[]
               ).map((platform) => (
                 <li key={platform}>
-                  <a
+                  <Link
                     href="#"
                     title={platform}
                     className="flex items-center justify-center text-white transition-all duration-200 bg-gray-800 rounded-full w-7 h-7 hover:bg-blue-600 focus:bg-blue-600"
                   >
                     <span className="sr-only">{platform}</span>
                     <span className="text-lg">{icons[platform]}</span>
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -65,13 +65,13 @@ const Footer = () => {
             <ul className="mt-6 space-y-4">
               {['About', 'Features', 'Works', 'Career'].map((link) => (
                 <li key={link}>
-                  <a
+                  <Link
                     href="#"
                     title={link}
                     className="flex text-base text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"
                   >
                     {link}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -90,13 +90,13 @@ const Footer = () => {
                 'Privacy Policy',
               ].map((link) => (
                 <li key={link}>
-                  <a
+                  <Link
                     href="#"
                     title={link}
                     className="flex text-base text-black transition-all duration-200 hover:text-blue-600 focus:text-blue-600"
                   >
                     {link}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

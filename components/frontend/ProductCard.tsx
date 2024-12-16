@@ -1,3 +1,4 @@
+import { ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -16,7 +17,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   const { title, imageUrl, discount, price, originalPrice, rating } = product;
 
   return (
-    <div className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
+    <div className="relative flex w-full max-w-[400px] flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
       <Link
         href="#"
         className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl"
@@ -29,7 +30,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           height={300}
         />
         {discount && (
-          <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
+          <span className="absolute top-0 left-0 m-2 rounded-full bg-yellow-500 px-2 text-center text-sm font-medium text-white">
             {discount}% OFF
           </span>
         )}
@@ -67,9 +68,12 @@ const ProductCard = ({ product }: { product: Product }) => {
         </div>
         <Link
           href="#"
-          className="flex items-center justify-center rounded-md bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+          className="flex items-center justify-center rounded-md bg-green-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-blue-300 gap-2"
         >
-          Add to cart
+          <span>
+            <ShoppingCart />
+          </span>
+          <span>Add to cart</span>
         </Link>
       </div>
     </div>

@@ -74,15 +74,12 @@ export function DataTable<TData, TValue>({
       <div className="flex items-center justify-between">
         <div className="flex items-center py-4">
           <Input
-            placeholder="Search by product..."
-            value={
-              (table.getColumn('product')?.getFilterValue() as string) ?? ''
-            }
+            placeholder="Search by title..."
+            value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
             onChange={(event) =>
-              table.getColumn('product')?.setFilterValue(event.target.value)
+              table.getColumn('title')?.setFilterValue(event.target.value)
             }
-            className="max-w-sm rounded-md bg-slate-50 shadow-md  text-slate-800 dark:text-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600"
-            style={{ borderRadius: '6px' }}
+            className="max-w-sm rounded-md bg-slate-50 text-slate-800 dark:text-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600"
           />
         </div>
 

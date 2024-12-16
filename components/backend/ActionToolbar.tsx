@@ -6,8 +6,7 @@ import { FiUpload, FiDownload, FiEdit, FiTrash, FiPlus } from 'react-icons/fi';
 interface ActionToolbarProps {
   onExport: () => void;
   onImport: () => void;
-  onBulkAction: () => void;
-  onDelete: () => void;
+
   onAdd: () => void; // Changed to onAdd
   title: string; // New title prop
 }
@@ -15,8 +14,7 @@ interface ActionToolbarProps {
 const ActionToolbar: React.FC<ActionToolbarProps> = ({
   onExport,
   onImport,
-  onBulkAction,
-  onDelete,
+
   onAdd,
   title,
 }) => {
@@ -43,21 +41,6 @@ const ActionToolbar: React.FC<ActionToolbarProps> = ({
 
       {/* Middle section - Bulk Action & Delete */}
       <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 w-full md:w-auto">
-        <button
-          onClick={onBulkAction}
-          className="flex items-center justify-center md:justify-start bg-gray-500 text-white px-3 py-2 rounded-md hover:bg-gray-600 transition w-full md:w-auto"
-        >
-          <FiEdit className="w-4 h-4 mr-1" />
-          Bulk Action
-        </button>
-
-        <button
-          onClick={onDelete}
-          className="flex items-center justify-center md:justify-start bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition w-full md:w-auto"
-        >
-          <FiTrash className="w-4 h-4 mr-1" />
-          Delete
-        </button>
         <button
           onClick={onAdd}
           className="flex items-center justify-center md:justify-start bg-green-500 text-white px-3 py-2 rounded-md hover:bg-green-600 transition w-full md:w-auto"

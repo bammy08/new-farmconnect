@@ -3,8 +3,16 @@ import { NextResponse, NextRequest } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, profileImageUrl, location, city, phone, userId } =
-      await request.json();
+    const {
+      name,
+      email,
+      shop,
+      profileImageUrl,
+      location,
+      city,
+      phone,
+      userId,
+    } = await request.json();
 
     if (!userId) {
       return NextResponse.json(
@@ -17,6 +25,7 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         email,
+        shop,
         profileImageUrl,
         location,
         city,
@@ -27,6 +36,12 @@ export async function POST(request: NextRequest) {
           },
         },
       },
+    });
+
+    // Update emailVerified field for the associated user
+    await db.user.update({
+      where: { id: userId },
+      data: { emailVerified: true },
     });
 
     return NextResponse.json(newFarmer, { status: 201 }); // Return status 201 for successful creation

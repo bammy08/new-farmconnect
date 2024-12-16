@@ -73,7 +73,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ role }) => {
           // Check role and redirect accordingly
           if (responseData.data.role === 'FARMER') {
             // Redirect to onboarding page with the user id
-            router.push(`/onboarding/${responseData.data.id}`);
+            router.push('/verify-email');
           } else if (responseData.data.role === 'USER') {
             // Redirect to login page for users
             router.push('/');

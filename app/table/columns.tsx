@@ -13,15 +13,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
+import Image from 'next/image';
 
-export type User = {
+export type Categories = {
   id: string;
-  product: string;
-  price: number;
-  category: string;
+  title: string;
+  imageUrl: string;
 };
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<Categories>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -45,35 +45,38 @@ export const columns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'product',
+    accessorKey: 'id',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Product
+          ID
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
   {
-    accessorKey: 'price',
-    header: 'Price',
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('price'));
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'NGN',
-      }).format(amount);
-
-      return <div className="">{formatted}</div>;
-    },
+    accessorKey: 'imageUrl',
+    header: 'Image',
+    cell: ({ row }) => (
+      <div className="">
+        <Image
+          width={80}
+          height={80}
+          src={row.getValue('imageUrl') as string}
+          alt={(row.getValue('title') as string) || 'Category Image'}
+          className=" object-cover rounded-md"
+        />
+      </div>
+    ),
   },
+
   {
-    accessorKey: 'category',
-    header: 'Category',
+    accessorKey: 'title',
+    header: 'Title',
   },
   {
     header: 'Actions',
